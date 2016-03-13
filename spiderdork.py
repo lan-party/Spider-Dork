@@ -36,13 +36,6 @@ def scan(dork, subd, tlim, tnum, xlia, clis, ofil, conf, load):
                                         except Exception, e:
                                                 print(address + " - Not Found.")
                 load += tnum
-                
-#  Required        sltxc
-# url dork or subdomain list, confirmation string
-#  Optional non-defaulting
-# subdomain list, target limit, number of threads
-#  Optional defaulting
-# domain extensions list, character list,
 
 
 dork = [""]
