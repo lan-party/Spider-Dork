@@ -21,6 +21,6 @@ Or edit it first to change some settings:
 
 
 ## Notes
-Using [Shodan](https://www.shodan.io), you can find ip addresses to seed the web crawler with and potentially reveal similar devices. Gather a list of addresses using the Shodan's available search filters, convert them to netblock abbreviations, then add those to the unscanned_netblocks.txt file with a new line between each. Netblocks can be abbreviated in the following way: `111.111.111.` which is equivalent to the CIDR notation `111.111.111.0/24`.
+Using [Shodan](https://www.shodan.io), you can find ip addresses to seed the web crawler with and potentially reveal similar devices. Gather a list of addresses using Shodan's available search filters, convert them to netblock abbreviations, then add those to the unscanned_netblocks.txt file with a new line between each. Netblocks can be abbreviated in the following way: `111.111.111.` which is equivalent to the CIDR notation `111.111.111.0/24`.
 
 Some other public databases include [ZoomEye](https://www.zoomeye.hk/) and [Censys](https://search.censys.io/).
