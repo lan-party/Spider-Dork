@@ -15,6 +15,8 @@ scanned_netblocks = scanned_netblocks_file.read().splitlines()
 scanned_netblocks_file.close()
 
 dorklist = open("dorks.txt", "r").read().splitlines()
+thread_count = 60
+delay_between_threads = 10
 
 # Functions
 
@@ -27,15 +29,19 @@ def random_netblock(thread_id):
     byte3 = random.randint(0, 255)
     netblock = str(byte1)+"."+str(byte2)+"."+str(byte3)+"."
 
-    # if(int(thread_id) % 2 == 0 or len(unscanned_netblocks) == 0):
-    if(int(thread_id) % 2 == 0 or len(unscanned_netblocks) == 0 and False):
-
+    # Edit this to force a specific search mode
+    if (int(thread_id) % 2 == 0 or len(unscanned_netblocks) == 0):
+    # if True:
+    # if False:
+        
         while (byte1 == 10) or (byte1 == 127 and byte2 >= 16 and byte2 <= 31) or (byte1 == 192 and byte2 == 168) or (netblock in scanned_netblocks):
             byte1 = random.randint(1, 255)
             byte2 = random.randint(1, 255)
             byte3 = random.randint(0, 255)
             netblock = str(byte1)+"."+str(byte2)+"."+str(byte3)+"."
     else:
+        if len(unscanned_netblocks) <= 0:
+            return False
         random.shuffle(unscanned_netblocks)
         netblock = unscanned_netblocks.pop(0)
     
@@ -175,7 +181,7 @@ sync_thread = threading.Thread(target=sync_queues)
 sync_thread.start()
 
 threads = []
-for a in range(0, 20):
+for a in range(0, thread_count):
     threads.append(threading.Thread(target=scan, args=(str(a),)))
     threads[a].start()
-    time.sleep(29)
+    time.sleep(delay_between_threads)
