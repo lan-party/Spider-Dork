@@ -60,7 +60,7 @@ def http_scan(netblock, thread_id):
             ips.append("http://" + ip)
             if len(ips) == 1:
                 print(thread_id.ljust(3) + " | HTTP (port 80) found in netblock.")
-        if sock.connect_ex((ip,8080)) == 0:
+        elif sock.connect_ex((ip,8080)) == 0:
             ips.append("http://" + ip + "8080")
             if len(ips) == 1:
                 print(thread_id.ljust(3) + " | HTTP (port 8080) found in netblock.")
@@ -112,8 +112,7 @@ def save_addresses(addresses):
         except Exception:
             pass
         # Get geographic data
-        resp = requests.get("http://ip-api.com/json/"+address[0]).json
-        resp = json.loads(requests.get("http://ip-api.com/json/"+address[0]).text)
+        resp = json.loads(requests.get("http://ip-api.com/json/"+address[0].split("//")[1]).text)
         country = resp['country']
         region = resp['region']
         city = resp['city']
