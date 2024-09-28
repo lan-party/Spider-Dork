@@ -61,7 +61,7 @@ def http_scan(netblock, thread_id):
             if len(ips) == 1:
                 print(thread_id.ljust(3) + " | HTTP (port 80) found in netblock.")
         elif sock.connect_ex((ip,8080)) == 0:
-            ips.append("http://" + ip + "8080")
+            ips.append("http://" + ip + ":8080")
             if len(ips) == 1:
                 print(thread_id.ljust(3) + " | HTTP (port 8080) found in netblock.")
         elif sock.connect_ex((ip,443)) == 0:
@@ -69,7 +69,7 @@ def http_scan(netblock, thread_id):
             if len(ips) == 1:
                 print(thread_id.ljust(3) + " | HTTPS (port 443) found in netblock.")
         elif sock.connect_ex((ip,8443)) == 0:
-            ips.append("https://" + ip + "8443")
+            ips.append("https://" + ip + ":8443")
             if len(ips) == 1:
                 print(thread_id.ljust(3) + " | HTTPS (port 8443) found in netblock.")
         sock.close()
