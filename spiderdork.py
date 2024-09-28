@@ -119,7 +119,7 @@ def save_addresses(addresses):
         city = resp['city']
         isp = resp['isp']
 
-        append_content += "\nhttp://" + address[0] + "\t" + str(title.encode("utf-8"))[2:-1] + "\t" + page_hash + "\t" + country + "\t" + region + "\t" + str(city.encode("utf-8"))[2:-1] + "\t" + str(isp.encode("utf-8"))[2:-1] + "\t" + json.dumps(address[2]) + "\t" + datetime.datetime.now().strftime("%m/%d/%Y")
+        append_content += "\n" + address[0] + "\t" + str(title.encode("utf-8"))[2:-1] + "\t" + page_hash + "\t" + country + "\t" + region + "\t" + str(city.encode("utf-8"))[2:-1] + "\t" + str(isp.encode("utf-8"))[2:-1] + "\t" + json.dumps(address[2]) + "\t" + datetime.datetime.now().strftime("%m/%d/%Y")
     # Append to file
     save_file = open("found_targets.tsv", "a")
     save_file.write(append_content)
