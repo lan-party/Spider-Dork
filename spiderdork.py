@@ -57,9 +57,21 @@ def http_scan(netblock, thread_id):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         socket.setdefaulttimeout(2)
         if sock.connect_ex((ip,80)) == 0:
-            ips.append(ip)
+            ips.append("http://" + ip)
             if len(ips) == 1:
-                print(thread_id.ljust(3) + " | HTTP found in netblock.")
+                print(thread_id.ljust(3) + " | HTTP (port 80) found in netblock.")
+        if sock.connect_ex((ip,8080)) == 0:
+            ips.append("http://" + ip + "8080")
+            if len(ips) == 1:
+                print(thread_id.ljust(3) + " | HTTP (port 8080) found in netblock.")
+        elif sock.connect_ex((ip,443)) == 0:
+            ips.append("https://" + ip)
+            if len(ips) == 1:
+                print(thread_id.ljust(3) + " | HTTPS (port 443) found in netblock.")
+        elif sock.connect_ex((ip,8443)) == 0:
+            ips.append("https://" + ip + "8443")
+            if len(ips) == 1:
+                print(thread_id.ljust(3) + " | HTTPS (port 8443) found in netblock.")
         sock.close()
 
     return ips
@@ -69,7 +81,7 @@ def dorklist_check(ips, thread_id):
     if len(ips) > 0:
         for ip in ips:
             try:
-                resp = requests.get("http://"+ip).text.lower()
+                resp = requests.get(ip).text.lower()
                 matching_dorks = []
                 for dork in dorklist:
                     if dork.lower() in resp:
