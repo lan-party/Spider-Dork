@@ -7,6 +7,15 @@ import time
 import threading
 import datetime
 
+
+# Config Variables
+dorklist = open("dorks.txt", "r").read().splitlines()
+thread_count = 60
+delay_between_threads = 10
+search_mode = 0  # 0 - Mixed, 1 - Random, 2 - From
+extended_port_search = False
+
+
 # Netblock queues
 unscanned_netblocks_file = open("unscanned_netblocks.txt", "r")
 unscanned_netblocks = unscanned_netblocks_file.read().splitlines()
@@ -15,12 +24,8 @@ scanned_netblocks_file = open("scanned_netblocks.txt", "r")
 scanned_netblocks = scanned_netblocks_file.read().splitlines()
 scanned_netblocks_file.close()
 
-dorklist = open("dorks.txt", "r").read().splitlines()
-thread_count = 60
-delay_between_threads = 10
 
 # Functions
-
 def random_netblock(thread_id):
     global unscanned_netblocks
     global scanned_netblocks
@@ -30,10 +35,8 @@ def random_netblock(thread_id):
     byte3 = random.randint(0, 255)
     netblock = str(byte1)+"."+str(byte2)+"."+str(byte3)+"."
 
-    # Edit this to force a specific search mode
-    if (int(thread_id) % 2 == 0 or len(unscanned_netblocks) == 0):
-    # if True:
-    # if False:
+    # Generate netblock based on search_mode
+    if (search_mode == 0 and (int(thread_id) % 2 == 0 or len(unscanned_netblocks) == 0)) or search_mode == 1:
         
         while (byte1 == 10) or (byte1 == 127 and byte2 >= 16 and byte2 <= 31) or (byte1 == 192 and byte2 == 168) or (netblock in scanned_netblocks):
             byte1 = random.randint(1, 255)
@@ -41,7 +44,9 @@ def random_netblock(thread_id):
             byte3 = random.randint(0, 255)
             netblock = str(byte1)+"."+str(byte2)+"."+str(byte3)+"."
     else:
+
         if len(unscanned_netblocks) <= 0:
+            
             return False
         random.shuffle(unscanned_netblocks)
         netblock = unscanned_netblocks.pop(0)
@@ -53,64 +58,89 @@ def random_netblock(thread_id):
 def http_scan(netblock, thread_id):
     ips = []
     for a in range(0, 255):
+
         ip = netblock+str(a)
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         socket.setdefaulttimeout(2)
         if sock.connect_ex((ip,80)) == 0:
+
             ips.append("http://" + ip)
             if len(ips) == 1:
                 print(thread_id.ljust(3) + " | HTTP (port 80) found in netblock.")
-        elif sock.connect_ex((ip,8080)) == 0:
+
+        elif extended_port_search and sock.connect_ex((ip,8080)) == 0:
+            
             ips.append("http://" + ip + ":8080")
             if len(ips) == 1:
                 print(thread_id.ljust(3) + " | HTTP (port 8080) found in netblock.")
-        elif sock.connect_ex((ip,443)) == 0:
+
+        elif extended_port_search and sock.connect_ex((ip,443)) == 0:
+            
             ips.append("https://" + ip)
             if len(ips) == 1:
                 print(thread_id.ljust(3) + " | HTTPS (port 443) found in netblock.")
-        elif sock.connect_ex((ip,8443)) == 0:
+
+        elif extended_port_search and sock.connect_ex((ip,8443)) == 0:
+
             ips.append("https://" + ip + ":8443")
             if len(ips) == 1:
                 print(thread_id.ljust(3) + " | HTTPS (port 8443) found in netblock.")
+
         sock.close()
 
     return ips
 
 def dorklist_check(ips, thread_id):
+
     matching_addresses = []
     if len(ips) > 0:
+
         for ip in ips:
+
             try:
+
                 resp = requests.get(ip).text.lower()
                 matching_dorks = []
                 for dork in dorklist:
+
                     if dork.lower() in resp:
                         matching_dorks.append(dork)
+
                 if len(matching_dorks) > 0:
+
                     matching_addresses.append([ip, resp, matching_dorks])
+
                     if len(matching_addresses) == 1:
                         print(thread_id.ljust(3) + " | Dork found in netblock.")
+
             except Exception:
                 pass
+
     return matching_addresses
 
 def save_addresses(addresses):
+
     append_content = ""
     for address in addresses:
+
         # Get page title
         title = ""
         try:
             title = address[1].replace(" ", "").replace("\r", "").replace("\n", "").replace("\t", "").split("<title")[1]
             title = title.split(">")[1]
             title = title.split("</title")[0]
+
         except Exception:
             pass
+        
         # Generate page hash
         page_hash = ""
         try:
             page_hash = hashlib.md5(address[1].encode('utf-8')).hexdigest()
+
         except Exception:
             pass
+
         # Get geographic data
         resp = json.loads(requests.get("http://ip-api.com/json/"+address[0].split("//")[1]).text)
         country = resp['country']
@@ -119,6 +149,7 @@ def save_addresses(addresses):
         isp = resp['isp']
 
         append_content += "\n" + address[0] + "\t" + str(title.encode("utf-8"))[2:-1] + "\t" + page_hash + "\t" + country + "\t" + region + "\t" + str(city.encode("utf-8"))[2:-1] + "\t" + str(isp.encode("utf-8"))[2:-1] + "\t" + json.dumps(address[2]) + "\t" + datetime.datetime.now().strftime("%m/%d/%Y")
+    
     # Append to file
     save_file = open("found_targets.tsv", "a")
     save_file.write(append_content)
