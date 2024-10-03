@@ -11,7 +11,7 @@ import datetime
 # Config Variables
 dorklist = open("dorks.txt", "r").read().splitlines()
 thread_count = 60
-delay_between_threads = 10
+delay_between_threads = 1
 search_mode = 0  # 0 - Mixed, 1 - Random, 2 - From
 extended_port_search = False
 

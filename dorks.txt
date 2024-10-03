@@ -7,6 +7,8 @@ cisco
 camera
 printer
 login
+log in
+log on
 live view
 video server
 EvoCam
@@ -53,3 +55,18 @@ ericsson
 meraki
 d-link
 scada
+siemens
+honeywell
+samsung
+texas instruments
+rockwell automation
+vodafone
+john deere
+accenture
+cognizant
+johnson controls
+tesla
+autodesk
+samsara
+sierra wireless
+oracle
