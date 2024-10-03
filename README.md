@@ -1,5 +1,5 @@
 # Spider-Dork
-A web crawler script for finding web servers from random ip ranges and searching for strings.
+A web crawler script for finding web servers from random ip ranges and searching for strings on them.
 
 ## Files
 - spiderdork.py - Main crawler script
@@ -14,7 +14,7 @@ Run the crawler script as is:
 
 `python spiderdork.py`
 
-Or edit it first to change some settings. Update values under the `# Config Variables` to configure things.
+Or edit it first to change some settings. Update values under the `# Config Variables` comment to configure things.
 - `thread_count` - sets the number of scanning threads to run. I have no frame of reference for what a good upper bound to this number should be.
 - `delay_between_threads` - a delay in seconds applied after each thread is created.
 - `search_mode` - a number (0-2) that determines what ip addresses the crawler will check
